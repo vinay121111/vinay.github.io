@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Sign Up and Login</title>
+    <style>
+        .index-form {
+            display: inline-block;
+            transition: transform 1s cubic-bezier(0, 2.21, 0, 0.98);
+            margin-left: 50px;
+            width: 250px;
+            height: 280px;
+            background: rgb(247, 187, 167);
+            border: solid;
+            border-width: 1px;
+            border-color: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            animation-name: colorchange;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+
+        .first:focus,
+        .last:focus,
+        .email2:focus,
+        .password2:focus {
+            outline: none;
+        }
+
+        .first {
+            margin-left: 30px;
+            margin-top: 14px;
+            display: inline-block;
+            border-radius: 20px;
+            border-width: 0cm;
+            height: 19px;
+        }
+
+        .last {
+            margin-left: 30px;
+            margin-top: 14px;
+            display: inline-block;
+            border-radius: 20px;
+            border-width: 0cm;
+            height: 19px;
+        }
+
+        .email2 {
+            margin-left: 30px;
+            margin-top: 14px;
+            display: inline-block;
+            border-radius: 20px;
+            border-width: 0cm;
+            height: 19px;
+        }
+
+        .password2 {
+            margin-left: 30px;
+            margin-top: 14px;
+            display: inline-block;
+            border-radius: 20px;
+            border-width: 0cm;
+            height: 19px;
+        }
+
+        .submitbtn {
+            margin-top: 17px;
+            margin-left: 34%;
+            border: groove;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            border: none;
+            border-radius: 20px;
+            background-color: skyblue;
+            cursor: pointer;
+        }
+
+        .submitbtn:active {
+            transform: scale(1.2);
+        }
+
+        .img {
+            margin-left: 90px;
+            margin-top: 10px;
+            width: 60px;
+            height: 60px;
+            border-radius: 100px;
+            border-width: 10px;
+            padding: 1px;
+            border: solid;
+        }
+
+        #successMessage,
+        #errorMessage {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #successMessage {
+            color: green;
+        }
+
+        #errorMessage {
+            color: red;
+        }
+        .checkbox1{
+            border: solid;
+            border-radius: 50px;
+        }
+        .loginLink {
+            margin-top: 10px;
+            text-align: center;
+            cursor: pointer;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="index-form">
+        <img class="img" src="images/logo.jpg" alt="">
+
+        <form id="signUpForm">
+            <input class="first" type="text" placeholder="First Name">
+            <input class="last" type="text" placeholder="Last Name">
+            <input class="email2" type="email" placeholder="Email">
+            <input class="password2" id="pass" type="password" placeholder="Password">
+            <input class="checkbox1" id="check" type="checkbox">
+            <button class="submitbtn" type="submit">Sign Up</button>
+            <div class="loginLink" id="loginLink">Already have an account? Login</div>
+        </form>
+
+        <form id="loginForm" style="display: none;">
+            <input class="email2" type="email" placeholder="Email">
+            <input class="password2"  type="password" placeholder="Password">
+            
+
+            <button class="submitbtn" type="submit">Login</button>
+        </form>
+
+        <div id="successMessage"></div>
+        <div id="errorMessage"></div>
+    </div>
+
+    <script>
+        // Check if the user is already signed up
+        var signUpDetails = localStorage.getItem("signUpDetails");
+
+        if (!signUpDetails) {
+            // Hide login form
+            document.getElementById("loginForm").style.display = "none";
+        }
+
+        document.getElementById("signUpForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get the input field values
+            var firstName = document.querySelector(".first").value;
+            var lastName = document.querySelector(".last").value;
+            var email = document.querySelector(".email2").value;
+            var password = document.querySelector(".password2").value;
+
+            // Check if all fields are filled
+            if (firstName && lastName && email && password) {
+                // Store the sign-up details in local storage
+                var userDetails = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password
+                };
+                localStorage.setItem("signUpDetails", JSON.stringify(userDetails));
+
+                // Show success message
+                var successMessage = document.getElementById("successMessage");
+                successMessage.textContent = "Registration successful!";
+                successMessage.style.display = "block";
+
+                // Hide success message after 2 seconds
+                setTimeout(function() {
+                    successMessage.style.display = "none";
+                }, 2000);
+
+                // Hide sign up form and show login form
+                document.getElementById("signUpForm").style.display = "none";
+                document.getElementById("loginForm").style.display = "block";
+            } else {
+                // Show fill details message
+                var fillDetailsMessage = document.getElementById("errorMessage");
+                fillDetailsMessage.textContent = "Please fill in all the details!";
+                fillDetailsMessage.style.display = "block";
+
+                // Hide fill details message after 2 seconds
+                setTimeout(function() {
+                    fillDetailsMessage.style.display = "none";
+                }, 2000);
+            }
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get the input field values
+            var email = document.querySelector("#loginForm .email2").value;
+            var password = document.querySelector("#loginForm .password2").value;
+
+            // Check if the login credentials match the stored sign-up details
+            var storedDetails = JSON.parse(localStorage.getItem("signUpDetails"));
+
+            if (storedDetails && email === storedDetails.email && password === storedDetails.password) {
+                // Redirect to another website (e.g., "https://www.example.com")
+                window.location.href = "https://www.example.com";
+            } else {
+                // Show error message
+                var errorMessage = document.getElementById("errorMessage");
+                errorMessage.textContent = "Invalid email or password!";
+                errorMessage.style.display = "block";
+
+                // Hide error message after 2 seconds
+                setTimeout(function() {
+                    errorMessage.style.display = "none";
+                }, 2000);
+            }
+        });
+
+        // Add event listener to the login link
+        document.getElementById("loginLink").addEventListener("click", function() {
+            // Hide sign up form and show login form
+            document.getElementById("signUpForm").style.display = "none";
+            document.getElementById("loginForm").style.display = "block";
+        });
+    </script>
+     <script>
+        check.onclick=togglepassword;
+    
+        function togglepassword(){
+            if(check.checked) pass.type="text";
+            else pass.type="password";
+        }
+       </script>
+</body>
+</html>
